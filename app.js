@@ -1,13 +1,16 @@
 
 const express = require('express');
-const bd = require('../conexao');
+
+const session = require('express-session'); 
+const PgStore = require('connect-pg-simple')(session); 
+const bd = require('./conexao'); 
+
 const rota_usuario = require('./routes/usuarios');
 const rota_categoria = require('./routes/categorias');
 const rota_produto = require('./routes/produtos');
 const rota_movimentacao = require('./routes/movimentacoes');
 const rota_painel = require('./routes/painel');
 const expressLayouts = require('express-ejs-layouts');
-const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
@@ -28,14 +31,29 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // 1. Configuração da sessão
-app.use(
-    session({
-        secret: process.env.SESSION_KEY,
-        resave: false,
-        saveUninitialized: false,
-        cookie: { maxAge: 900000 }
-    })
-);
+// app.use(
+//     session({
+//         secret: process.env.SESSION_KEY,
+//         resave: false,
+//         saveUninitialized: false,
+//         cookie: { maxAge: 900000 }
+//     })
+// );
+app.set('trust proxy', 1); 
+app.use(session({ 
+    store: new PgStore({ pool: bd, tableName: 'session', 
+        pruneSessionInterval: false }), 
+    secret: process.env.SESSION_KEY, 
+    resave: false, 
+    saveUninitialized: false, 
+    cookie: { 
+        maxAge: 900000, 
+        httpOnly: true, 
+        sameSite: 'lax', 
+        secure: process.env.VERCEL === '1' 
+    } 
+})); 
+
 
 // 2. Disponibiliza o usuário logado para o EJS
 app.use((req, res, next) => {
@@ -74,6 +92,10 @@ app.get('/logout', (req, res) => {
 });
 
 // Inicialização do servidor
-app.listen(port, () => {
-    console.log(`Servidor executando em: http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//     console.log(`Servidor executando em: http://localhost:${port}`);
+// });
+if (require.main === module && !process.env.VERCEL) { 
+    app.listen(process.env.PORT || 3000); 
+} 
+module.exports = app; 
