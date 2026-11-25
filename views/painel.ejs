@@ -1,0 +1,247 @@
+<main>
+    <h1>Painel</h1>
+
+    <% if (mensagem) { %>
+        <p><%= mensagem %></p>
+    <% } %>
+</main>
+
+<!-- Importa a biblioteca Chart.js de um CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>    
+    /* Container principal do painel */
+    .dashboard-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    /* Cards dos indicadores */
+    .dashboard-card {
+        background-color: #f7f3e9;
+        border: 1px solid #d4c0a5;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+
+        flex: 1 1 200px;
+    }
+
+    /* Título dos cards */
+    .dashboard-card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #6d4c35;
+        margin-bottom: 10px;
+    }
+
+    /* Valores dos cards */
+    .dashboard-card-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #8b5e3c;
+    }
+
+    /* Cards dos gráficos */
+    .chart-card {
+        flex: 1 1 400px;
+        height: 400px;
+        position: relative;
+    }
+
+    /* Gráficos */
+    .chart-card canvas {
+        width: 100% !important;
+        height: 300px !important;
+    }
+
+    /* Tabela de produtos */
+    .tabela-container {
+        width: 100%;
+        background-color: #f7f3e9;
+        border: 1px solid #d4c0a5;
+        border-radius: 8px;
+        padding: 20px;
+        overflow-x: auto;
+    }
+
+</style>
+
+<div class="dashboard-grid">
+
+    <!-- Card de Total de Produtos em Estoque -->
+    <div class="dashboard-card">
+        <div class="dashboard-card-title">
+            Total de Produtos em Estoque
+        </div>
+        <div class="dashboard-card-value">
+            <%= data.totalEstoque %>
+        </div>
+    </div>
+
+    <!-- Card de Total de Categorias -->
+    <div class="dashboard-card">
+        <div class="dashboard-card-title">
+            Total de Categorias
+        </div>
+        <div class="dashboard-card-value">
+            <%= data.totalCategorias %>
+        </div>
+    </div>
+
+    <!-- Card de Somatório dos Preços -->
+    <div class="dashboard-card">
+        <div class="dashboard-card-title">
+            Valor Total em Estoque
+        </div>
+        <div class="dashboard-card-value">
+            R$ <%= data.valorTotalEstoque %>
+        </div>
+    </div>
+
+    <!-- Card de Produtos Abaixo do Estoque Mínimo -->
+    <div class="dashboard-card">
+        <div class="dashboard-card-title">
+            Produtos Abaixo do Estoque Mínimo
+        </div>
+        <div class="dashboard-card-value">
+            <%= data.produtosAbaixoMinimo %>
+        </div>
+    </div>
+
+    <!-- Card para o Gráfico de Valor por Categoria -->
+    <div class="dashboard-card chart-card">
+        <div class="dashboard-card-title">
+            Valor em Estoque
+        </div>
+        <canvas id="categoriaChart"></canvas>
+    </div>
+
+    <!-- Card para o Gráfico de Estoque por Produto -->
+    <div class="dashboard-card chart-card">
+        <div class="dashboard-card-title">
+            Estoque por Produto
+        </div>
+        <canvas id="produtoChart"></canvas>
+    </div>
+
+    <!-- Tabela de Produtos com Estoque Crítico -->
+    <div class="tabela-container">
+
+        <h2 style="font-size: 1.2rem; margin-bottom: 15px; color: #6d4c35;">
+            Produtos Abaixo do Estoque Mínimo
+        </h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 10%">ID</th>
+                    <th>Nome</th>
+                    <th>Estoque</th>
+                    <th>Estoque Mínimo</th>
+                    <th>Valor</th>
+                    <th>Imagem</th>
+                    <th>Categoria</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% data.produtosAbaixoMinimoList.forEach(produto => { %>
+                    <tr>
+                        <td><%= produto.id_produto %></td>
+                        <td><%= produto.nome_produto %></td>
+                        <td><%= produto.estoque %></td>
+                        <td><%= produto.estoque_minimo %></td>
+
+                        <td>
+                            R$ <%= (parseFloat(produto.valor) || 0)
+                                .toFixed(2).replace('.', ',') %>
+                        </td>
+
+                        <td>
+                            <img
+                                src="<%= produto.imagem %>"
+                                alt="Produto"
+                                style="width: 3rem; height: 3rem; margin-right: 0.5rem; object-fit: cover;"
+                            >
+                        </td>
+
+                        <td><%= produto.nome_categoria %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+    // Dados do gráfico de categorias
+    const dadosCategorias = {
+        labels: <%- JSON.stringify(data.categorias.labels) %>,
+        datasets: [{
+            data: <%- JSON.stringify(data.categorias.values) %>,
+            //backgroundColor: 'rgba(255, 235, 59, 0.8)'
+            backgroundColor: [
+                'red',
+                'green',
+                'blue',
+                'orange',
+                'purple'
+            ]
+        }]
+    };
+
+    // Dados do gráfico de produtos
+    const dadosProdutos = {
+        labels: <%- JSON.stringify(data.produtos.labels) %>,
+        datasets: [{
+            data: <%- JSON.stringify(data.produtos.values) %>,
+            backgroundColor: 'rgba(139, 94, 60, 0.8)'
+        }]
+    };
+
+    // Configuração para o gráfico de categorias
+    const configCategoria = {
+        type: 'bar',
+        data: dadosCategorias,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    // Configuração para o gráfico de produtos
+    const configProduto = {
+        type: 'bar',
+        data: dadosProdutos,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    // Cria e renderiza os gráficos
+    new Chart(
+        document.getElementById('categoriaChart'),
+        configCategoria
+    );
+
+    new Chart(
+        document.getElementById('produtoChart'),
+        configProduto
+    );
+</script>

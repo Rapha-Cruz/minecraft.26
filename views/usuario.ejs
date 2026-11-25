@@ -1,0 +1,47 @@
+<div class="header-content">
+  <form action="/usuarios/pesquisar" method="post" class="form-pesquisa">
+    <input type="text" name="pesquisa" placeholder="Pesquisar..." class="input-pesquisa">
+    <button class="botao-pesquisa">&#128270;</button>
+  </form>
+  <h1>Usuários</h1>
+  <form action="novo_usuario" method="get">
+    <button class="botao-acao">&#43;</button>
+  </form>
+</div>
+
+<% if (mensagem) { %>
+  <p class="mensagem-alerta">
+    <%= mensagem %>
+  </p>
+<% } %>
+
+<div class="tabela-container">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Usuário</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+            <% usuarios.forEach(usuario=> { %>
+                <tr>
+                <td><%= usuario.id_usuario %></td>
+                <td><%= usuario.nome %></td>
+                <td><%= usuario.usuario %></td>
+                <td>
+                    <form action="/usuarios/alterar/<%= usuario.id_usuario %>" method="get" class="form-acoes">
+                    <button class="botao-acao editar">&#128393;</button>
+                    </form>
+                                
+                    <form action="/usuarios/excluir/<%= usuario.id_usuario %>" method="post" class="form-acoes" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
+                    <button class="botao-acao remover">&#128465;</button>
+                    </form>                
+                </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
