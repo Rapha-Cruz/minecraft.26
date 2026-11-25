@@ -1,0 +1,38 @@
+.botao-menu {
+    display: none;
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+}
+@media(max-width: 600px) {
+    .botao-menu {
+        display: block;
+    }
+    nav {
+        display: none;
+        position: absolute;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        background-color: #9fdbf9;
+    }
+    nav.aberto {
+        display: flex;
+    }
+    nav a {
+        padding: 15px;
+        justify-content: center;
+    }
+    nav a:hover {
+        background-color: #9fdbf9;
+    }
+    header {
+        position: relative;
+    }
+    .espaco {
+        display: none;
+    }
+}

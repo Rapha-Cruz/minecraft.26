@@ -1,0 +1,66 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #ecf6ff;
+    color: #1e293b;
+}
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #9fdbf9, #479aff);
+    height: 50px;
+    padding-inline: 20px;
+}
+.logo, .espaco {
+    width: 100px;
+}
+.logo {
+    font-weight: bold;
+    color: #1e40af;
+}
+nav {
+    display: flex;
+    height: 100%;
+}
+nav a {
+    color: #1e3a8a;
+    height: 100%;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding-inline: 20px;
+    transition: 0.2s;
+}
+nav a:hover {
+    background-color: #9fdbf9;
+}
+.pagina {
+    flex: 1;
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 32px 20px;
+    text-align: center;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+}
+main h1 {
+    margin-bottom: 10px;
+}
+main p {
+    color: #64748b;
+}
+footer {
+    text-align: center;
+    padding: 18px;
+    background-color: #9fdbf9;
+    color: #1e3a8a;
+}
