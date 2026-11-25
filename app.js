@@ -95,7 +95,10 @@ app.get('/logout', (req, res) => {
 // app.listen(port, () => {
 //     console.log(`Servidor executando em: http://localhost:${port}`);
 // });
-if (require.main === module && !process.env.VERCEL) { 
-    app.listen(process.env.PORT || 3000); 
-} 
-module.exports = app; 
+if (!process.env.VERCEL) {
+    app.listen(port, () => {
+        console.log(`Servidor executando em: http://localhost:${port}`);
+    });
+}
+
+module.exports = app;
