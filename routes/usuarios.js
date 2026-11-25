@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const bd = require('../conexao');; // Importa a conexão com o banco
+const bd = require('../conexao'); // Importa a conexão com o banco
 
 // Rota para a página de cadastro (HTML)
 router.get('/login', (req, res) => {

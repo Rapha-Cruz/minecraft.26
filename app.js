@@ -1,5 +1,6 @@
 
 const express = require('express');
+const bd = require('../conexao');
 const rota_usuario = require('./routes/usuarios');
 const rota_categoria = require('./routes/categorias');
 const rota_produto = require('./routes/produtos');
